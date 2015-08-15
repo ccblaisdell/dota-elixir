@@ -12,7 +12,7 @@ defmodule DotaApi.Client do
   end
 
   defp add_params(url, params) do
-    api_key = Dict.fetch!(Application.get_env(:steam, :web_api), :key)
+    api_key = System.get_env("STEAM_WEB_API_KEY")
     params = Map.put(params, :key, api_key)
     encoded_params = params
     |> Map.keys()

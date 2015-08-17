@@ -22,7 +22,7 @@ defmodule DotaApi do
     matches = summaries
     |> Enum.map(&async_match/1)
     |> Enum.map(&await_match/1)
-    {:ok}
+    {:ok, matches}
   end
 
   defp async_match(summary) do

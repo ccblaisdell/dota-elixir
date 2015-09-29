@@ -36,4 +36,15 @@ defmodule DotaApi do
     details
   end
 
+  def profiles(ids) do
+    profiles = Client.fetch("GetPlayerSummaries", %{steamids: Enum.join(ids, ",")},
+                            "ISteamUser", "v0002")
+    {:ok, profiles}
+  end
+
+  def profile(id) do
+    {:ok, [profile | _]} = profiles([id])
+    {:ok, profile}
+  end
+
 end

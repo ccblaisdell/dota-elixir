@@ -15,19 +15,40 @@ defmodule DotaApi do
     {:ok, summaries}
   end
 
+  def dotabuff_history(account_id) do
+    match_ids = Client.fetch("GetDotabuffMatchHistory", account_id)
+    {:ok, match_ids}
+  end
+
+  def match_ids_stream_dotabuff(account_id) do
+    Client.match_ids_from_dotabuff(account_id)
+  end
+
   # This is just a proof of concept for fetching multiple
   # matches in parallel.
   def matches_for(account_id) do
     {:ok, %{"matches" => summaries}} = history(account_id)
     matches = summaries
-    |> Enum.map(&async_match/1)
+    |> Enum.map(&Map.fetch(&1, "match_id"))
+    |> Enum.map(fn {:ok, id} -> async_match(id) end)
     |> Enum.map(&await_match/1)
     {:ok, matches}
   end
 
-  defp async_match(summary) do
-    match_id = Map.fetch!(summary, "match_id")
-    Task.async(fn -> match(match_id) end)
+  def dotabuff_matches_for(account_id) do
+    {:ok, match_ids} = dotabuff_history(account_id)
+    matches = p_matches(match_ids)
+    {:ok, matches}
+  end
+
+  def p_matches(ids) do
+    ids
+    |> Enum.map(&async_match/1)
+    |> Enum.map(&await_match/1)
+  end
+
+  defp async_match(id) do
+    Task.async(fn -> match(id) end)
   end
 
   defp await_match(task) do

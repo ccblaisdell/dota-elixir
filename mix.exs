@@ -3,7 +3,7 @@ defmodule DotaApi.Mixfile do
 
   def project do
     [app: :dota_api,
-     version: "0.0.3",
+     version: "0.0.4",
      elixir: "~> 1.0",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
@@ -28,6 +28,7 @@ defmodule DotaApi.Mixfile do
   # Type `mix help deps` for more examples and options
   defp deps do
     [{:httpoison, "~> 0.7.2"},
-     {:poison, "~> 1.4.0"}]
+     {:poison, "~> 1.4.0"},
+     {:floki, "~> 0.5.0"}]
   end
 end

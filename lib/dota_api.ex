@@ -21,7 +21,7 @@ defmodule DotaApi do
   end
 
   def match_ids_stream_dotabuff(account_id) do
-    Client.match_ids_from_dotabuff(account_id)
+    Client.match_ids_stream_dotabuff(account_id)
   end
 
   # This is just a proof of concept for fetching multiple

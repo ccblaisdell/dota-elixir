@@ -56,7 +56,8 @@ defmodule DotaApi.Client do
 
   def fetch("GetPlayerSummaries" = method, options, interface, api_version) do
     url = build_url(method, options, interface, api_version)
-    case HTTPoison.get(url, [], []) do
+    params = get_params(options)
+    case HTTPoison.get(url, [], params) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         response = Poison.Parser.parse!(body)
         response["response"]["players"]
@@ -66,7 +67,8 @@ defmodule DotaApi.Client do
 
   def fetch(method, options \\ %{}, interface \\ "IDOTA2Match_570", api_version \\ "V001") do
     url = build_url(method, options, interface, api_version)
-    case HTTPoison.get(url, [], []) do
+    params = get_params(options)
+    case HTTPoison.get(url, [], params) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         response = Poison.Parser.parse!(body)
         response["result"]
@@ -75,18 +77,15 @@ defmodule DotaApi.Client do
   end
 
   defp build_url(method, options, interface, api_version) do
-    "https://api.steampowered.com/#{interface}/#{method}/#{api_version}?"
-    |> add_params(options)
+    "https://api.steampowered.com/#{interface}/#{method}/#{api_version}"
   end
 
-  defp add_params(url, params) do
+  defp get_params(options) do
     api_key = System.get_env("STEAM_WEB_API_KEY")
-    params = Map.put(params, :key, api_key)
-    encoded_params = params
-    |> Map.keys()
-    |> Enum.map(fn k -> "#{k}=#{Map.fetch!(params, k)}" end)
-    |> Enum.join("&")
-    url <> encoded_params
+    params = options
+    |> Map.put(:key, api_key)
+    |> Enum.into([])
+    [params: params]
   end
 
   defp get_dotabuff_page_count(body) do

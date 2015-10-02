@@ -72,7 +72,7 @@ defmodule DotaApi.Client do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         response = Poison.Parser.parse!(body)
         response["result"]
-      response -> {:error, response}
+      response -> response
     end
   end
 

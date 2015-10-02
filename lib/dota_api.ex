@@ -6,18 +6,27 @@ defmodule DotaApi do
   # Returns a single match in full detail
   def match(match_id) do
     details = Client.fetch("GetMatchDetails", %{match_id: match_id}) 
-    {:ok, details}
+    case details do
+      {:error, reason} -> details
+      _ -> {:ok, details}
+    end
   end
 
   # Returns a list of match summaries
   def history(account_id) do
     summaries = Client.fetch("GetMatchHistory", %{account_id: account_id})
-    {:ok, summaries}
+    case summaries do
+      {:error, reason} -> summaries
+      _ -> {:ok, summaries}
+    end
   end
 
   def dotabuff_history(account_id) do
     match_ids = Client.fetch("GetDotabuffMatchHistory", account_id)
-    {:ok, match_ids}
+    case match_ids do
+      {:error, reason} -> match_ids
+      _ -> {:ok, match_ids}
+    end
   end
 
   def match_ids_stream_dotabuff(account_id) do

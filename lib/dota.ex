@@ -2,6 +2,8 @@ defmodule Dota do
   alias Dota.Steam
   alias Dota.Dotabuff
 
+  @steam_id_diff 76561197960265728
+
   ## Client API
 
   # Returns a single match in full detail
@@ -65,8 +67,19 @@ defmodule Dota do
 
   def item_img(id), do: Steam.get_item_image(id)
 
-  def steam_to_dota_id(steam_id), do: steam_id - 76561197960265728
+  def steam_to_dota_id(steam_id) when is_integer(steam_id) do
+    steam_id - @steam_id_diff
+  end
+  def steam_to_dota_id(steam_id) when is_binary(steam_id) do
+    String.to_integer(steam_id) - @steam_id_diff
+  end
 
-  def dota_to_steam_id(dota_id),  do: dota_id  + 76561197960265728
+  def dota_to_steam_id(dota_id) when is_integer(dota_id) do
+    dota_id + @steam_id_diff
+  end
+  def dota_to_steam_id(dota_id) when is_binary(dota_id) do
+    String.to_integer(dota_id) + @steam_id_diff
+  end
+
 
 end

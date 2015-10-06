@@ -2,9 +2,9 @@ defmodule Dota.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :dota_api,
-     version: "0.0.7",
-     elixir: "~> 1.0",
+    [app: :dota,
+     version: "0.0.9",
+     elixir: "~> 1.1",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      deps: deps]

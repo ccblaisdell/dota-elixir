@@ -22,14 +22,6 @@ defmodule Dota do
     end
   end
 
-  def dotabuff_history(account_id) do
-    match_ids = Dotabuff.history(account_id)
-    case match_ids do
-      {:error, reason} -> match_ids
-      _ -> {:ok, match_ids}
-    end
-  end
-
   def p_matches(ids) do
     ids
     |> Enum.map(&async_match/1)
@@ -55,11 +47,21 @@ defmodule Dota do
     {:ok, profile}
   end
 
-  def heroes, do: Steam.fetch("GetHeroes")
+  def heroes do
+    case Steam.fetch("GetHeroes", %{}, "IEconDOTA2_570") do
+      {:ok, heroes} -> heroes["heroes"]
+      response -> response
+    end
+  end
 
   def hero_img(id), do: Steam.get_hero_image(id)
 
-  def items, do: Steam.fetch("GetGameItems")
+  def items do 
+    case Steam.fetch("GetGameItems", %{}, "IEconDOTA2_570") do
+      {:ok, items} -> items["items"]
+      response -> response
+    end
+  end
 
   def item_img(id), do: Steam.get_item_image(id)
 

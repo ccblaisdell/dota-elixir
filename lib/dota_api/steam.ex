@@ -1,7 +1,7 @@
 defmodule Dota.Steam do
   require IEx
 
-  @hero_img_sizes = ~w(sb.png lg.png full.png vert.png)
+  @hero_img_sizes ~w(sb.png lg.png full.png vert.png)
 
   def fetch("GetDotabuffMatchHistory", account_id), do: Dota.Dotabuff.history(account_id)
 
@@ -41,7 +41,7 @@ defmodule Dota.Steam do
   end
 
   def get_item_image(id) do
-    name = Dota.Item.get(id)
+    name = Dota.Item.name(id)
     url = "http://cdn.dota2.com/apps/dota2/images/items/#{name}_lg.png"
     case HTTPoison.get(url) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
@@ -51,9 +51,9 @@ defmodule Dota.Steam do
   end
 
   def get_hero_image(id) do
-    name = Dota.Hero.get(id)
+    name = Dota.Hero.name(id)
     base_url = "http://cdn.dota2.com/apps/dota2/images/heroes/#{name}_"
-    @hero_img_sizes |> Enum.map(&get_image(base_url))
+    @hero_img_sizes |> Enum.map(get_hero_image(base_url))
   end
 
   defp get_hero_image(size, base_url) do
@@ -61,7 +61,7 @@ defmodule Dota.Steam do
     case HTTPoison.get(url) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         {:ok, body}
-      response -> respnose
+      response -> response
     end
   end
 end

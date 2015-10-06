@@ -7,7 +7,7 @@ defmodule Dota.Dotabuff do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         page_count = get_page_count(body)
 
-        ids = 1..page_count
+        1..page_count
         |> Stream.map(&get_page(account_id, &1))
         |> Stream.map(&get_match_ids_from_page/1)
 

@@ -1,4 +1,4 @@
-defmodule DotaApi.GameMode do
+defmodule Dota.GameMode do
   @game_modes %{
     1 => 'All Pick',
     2 => 'Captains Mode',

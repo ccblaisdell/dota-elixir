@@ -1,5 +1,5 @@
-defmodule DotaApi do
-  alias DotaApi.Client
+defmodule Dota do
+  alias Dota.Client
 
   ## Client API
 

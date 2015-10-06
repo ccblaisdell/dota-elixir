@@ -1,4 +1,4 @@
-defmodule DotaApi.Client do
+defmodule Dota.Client do
   require IEx
 
   def match_ids_stream_dotabuff(account_id) do
@@ -23,12 +23,12 @@ defmodule DotaApi.Client do
 
         body 
         |> get_match_ids_from_page
-        |> DotaApi.p_matches
+        |> Dota.p_matches
 
         match_stream = 2..page_count
         |> Stream.map(&get_dotabuff_page(account_id, &1))
         |> Stream.map(&get_match_ids_from_page/1)
-        |> Stream.map(&DotaApi.async_matches/1)
+        |> Stream.map(&Dota.async_matches/1)
 
         Enum.to_list(match_stream)
 

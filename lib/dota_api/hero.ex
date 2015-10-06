@@ -1,4 +1,4 @@
-defmodule DotaApi.Hero do
+defmodule Dota.Hero do
   @heroes %{
     1 => "Anti-Mage",
     2 => "Axe",

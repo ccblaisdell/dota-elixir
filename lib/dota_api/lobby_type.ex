@@ -1,4 +1,4 @@
-defmodule DotaApi.LobbyType do
+defmodule Dota.LobbyType do
   @lobby_types %{
    -1 => 'Invalid',
     0 => 'Public matchmaking',

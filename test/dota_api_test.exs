@@ -1,4 +1,4 @@
-defmodule DotaApiTest do
+defmodule Dota do
   use ExUnit.Case
 
   test "the truth" do

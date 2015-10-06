@@ -1,4 +1,4 @@
-defmodule DotaApi.Mixfile do
+defmodule Dota.Mixfile do
   use Mix.Project
 
   def project do

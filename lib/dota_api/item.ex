@@ -1,4 +1,4 @@
-defmodule DotaApi.Item do
+defmodule Dota.Item do
   @items %{
    0 => 'emptyitembg',
    1 => 'blink',

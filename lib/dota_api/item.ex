@@ -257,7 +257,17 @@ defmodule Dota.Item do
     1019 => %{"id" => 1019, "localized_name" => "Greevil Chow", "name" => "winter_greevil_garbage", "recipe" => 0, "secret_shop" => 0, "side_shop" => 0},
     1020 => %{"id" => 1020, "localized_name" => "Greevil Blink Bone", "name" => "winter_greevil_chewy", "recipe" => 0, "secret_shop" => 0, "side_shop" => 0}
   }
-
   
   def get(id), do: @items[id]
+
+  def localized_name(id), do: @items[id]["localized_name"]
+
+  def name(id), do: @items[id]["name"]
+
+  def recipe?(id), do: @items[id]["recipe"] == 1
+
+  def secret_shop?(id), do: @items[id]["secret_shop"] == 1
+
+  def side_shop?(id), do: @items[id]["side_shop"] == 1
+
 end

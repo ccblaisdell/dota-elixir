@@ -118,4 +118,6 @@ defmodule Dota.Hero do
 
   def name(id), do: @heroes[id]["name"]
 
+  def all, do: @heroes
+
 end

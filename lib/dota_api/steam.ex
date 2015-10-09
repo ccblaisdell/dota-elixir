@@ -60,7 +60,7 @@ defmodule Dota.Steam do
     url = base_url <> size
     case HTTPoison.get(url) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
-        {:ok, body}
+        {:ok, body, size}
       response -> response
     end
   end

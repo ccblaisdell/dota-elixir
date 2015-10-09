@@ -270,4 +270,6 @@ defmodule Dota.Item do
 
   def side_shop?(id), do: @items[id]["side_shop"] == 1
 
+  def all, do: @items
+
 end

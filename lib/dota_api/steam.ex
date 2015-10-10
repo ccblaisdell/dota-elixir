@@ -16,7 +16,18 @@ defmodule Dota.Steam do
     end
   end
 
-  def fetch(method, options \\ %{}, interface \\ "IDOTA2Match_570", api_version \\ "V001") do
+  def fetch("GetFriendList" = method, options, "ISteamUser" = interface, api_version) do
+    url = build_url(method, interface, api_version)
+    params = get_params(options)
+    case HTTPoison.get(url, [], params) do
+      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
+        response = Poison.Parser.parse!(body)
+        response["friendslist"]["friends"]
+      response -> response
+    end
+  end
+
+  def fetch(method, options \\ %{}, interface \\ "IDOTA2Match_570", api_version \\ "v0001") do
     url = build_url(method, interface, api_version)
     params = get_params(options)
     case HTTPoison.get(url, [], params) do

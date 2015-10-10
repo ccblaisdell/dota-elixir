@@ -49,6 +49,13 @@ defmodule Dota do
     {:ok, profile}
   end
 
+  def friends(id) do
+    profiles = Steam.fetch("GetFriendList", %{steamid: id}, "ISteamUser") 
+    |> Enum.map(&Map.get(&1, "steamid"))
+    |> profiles
+    {:ok, profiles}
+  end
+
   def heroes do
     case Steam.fetch("GetHeroes", %{}, "IEconDOTA2_570") do
       {:ok, heroes} -> heroes["heroes"]

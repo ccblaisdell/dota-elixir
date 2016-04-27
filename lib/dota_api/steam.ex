@@ -4,37 +4,55 @@ defmodule Dota.Steam do
   @hero_img_sizes ~w(sb.png lg.png full.png)
 
   def fetch("GetDotabuffMatchHistory", account_id), do: Dota.Dotabuff.history(account_id)
-
+  
   def fetch("GetPlayerSummaries" = method, options, interface, api_version) do
-    url = build_url(method, interface, api_version)
-    params = get_params(options)
-    case HTTPoison.get(url, [], params) do
-      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
-        response = Poison.Parser.parse!(body)
-        response["response"]["players"]
+    case do_fetch(method, options, interface, api_version) do
+      {:ok, response} -> {:ok, response["players"]}
       response -> response
     end
   end
-
+  
   def fetch("GetFriendList" = method, options, "ISteamUser" = interface, api_version) do
-    url = build_url(method, interface, api_version)
-    params = get_params(options)
-    case HTTPoison.get(url, [], params) do
-      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
-        response = Poison.Parser.parse!(body)
-        response["friendslist"]["friends"]
+    case do_fetch(method, options, interface, api_version) do
+      {:ok, result} -> {:ok, result["friends"]}
       response -> response
+    end
+  end
+  
+  def fetch("GetMatchHistory" = method, options, interface, api_version) do
+    case do_fetch(method, options, interface, api_version) do
+      {:ok, result} ->
+        Map.update!(result, "matches", fn matches ->
+          Enum.map(matches, fn m -> Map.update!(m, "match_id", &to_string/1) end)
+        end)
+        {:ok, result}
+      response -> 
+        response
     end
   end
 
   def fetch(method, options \\ %{}, interface \\ "IDOTA2Match_570", api_version \\ "v0001") do
+    do_fetch(method, options, interface, api_version)
+  end
+    
+  defp do_fetch(method, options \\ %{}, interface \\ "IDOTA2Match_570", api_version \\ "v0001") do
     url = build_url(method, interface, api_version)
     params = get_params(options)
     case HTTPoison.get(url, [], params) do
+      
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         response = Poison.Parser.parse!(body)
-        response["result"]
-      response -> response
+        case response["result"] do
+          %{"error" => reason} -> {:error, reason}
+          %{"status" => 15, "statusDetail" => details} -> {:error, details}
+          _ -> {:ok, response["result"]}
+        end
+        
+      {:ok, %HTTPoison.Response{status_code: 503, body: body}} ->
+        {:error, 503, "Service unavailable"}
+        
+      response -> {:error, response}
+      
     end
   end
 

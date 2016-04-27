@@ -1,37 +1,30 @@
 defmodule Dota do
   alias Dota.Steam
   alias Dota.Dotabuff
+  require IEx
 
   @steam_id_diff 76561197960265728
 
   ## Client API
 
-  # Returns a single match in full detail
+  # Returns {:ok, match_details}, where match_details is a map,
+  # or {:error, reason}, where reason is a string from the API, or an http response.
   def match(match_id) do
-    details = Steam.fetch("GetMatchDetails", %{match_id: match_id}) 
-    case details do
-      {:error, reason} -> details
-      _ -> {:ok, details}
-    end
+    Steam.fetch("GetMatchDetails", %{match_id: match_id}) 
   end
 
   # Returns a list of match summaries
   def history(account_id) do
-    summaries = Steam.fetch("GetMatchHistory", %{account_id: account_id})
-    case summaries do
-      {:error, reason} -> summaries
-      _ -> {:ok, summaries}
-    end
+    Steam.fetch("GetMatchHistory", %{account_id: account_id})
   end
 
+  # NOTE: I don't know what this is for...
   def p_matches(ids) do
     ids
     |> Enum.map(&async_match/1)
     |> Enum.map(&await_match/1)
   end
-
   defp async_match(id), do: Task.async(fn -> match(id) end)
-
   defp await_match(task) do
     {:ok, details} = Task.await(task)
     IO.inspect "Fetched match: #{details["match_id"]}"
@@ -39,9 +32,7 @@ defmodule Dota do
   end
 
   def profiles(ids) do
-    profiles = Steam.fetch("GetPlayerSummaries", %{steamids: Enum.join(ids, ",")},
-                            "ISteamUser", "v0002")
-    {:ok, profiles}
+    Steam.fetch("GetPlayerSummaries", %{steamids: Enum.join(ids, ",")}, "ISteamUser", "v0002")
   end
 
   def profile(id) do
@@ -50,10 +41,14 @@ defmodule Dota do
   end
 
   def friends(id) do
-    profiles = Steam.fetch("GetFriendList", %{steamid: id}, "ISteamUser") 
-    |> Enum.map(&Map.get(&1, "steamid"))
-    |> profiles
-    {:ok, profiles}
+    case Steam.fetch("GetFriendList", %{steamid: id}, "ISteamUser")  do
+      {:ok, ids} ->
+        accounts = ids
+        |> Enum.map(&Map.get(&1, "steamid"))
+        |> profiles
+        {:ok, accounts}
+      response -> response
+    end
   end
 
   def heroes do

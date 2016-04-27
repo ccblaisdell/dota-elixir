@@ -39,12 +39,12 @@ defmodule Dota.Dotabuff do
     match_count / 50 |> Float.ceil |> round
   end
 
+  # Returns a list of match IDs as strings
   defp get_match_ids_from_page(body) do
     body 
     |> Floki.find(".cell-large a") 
     |> Floki.attribute("href") 
     |> Enum.map(&String.split(&1, "/"))
     |> Enum.map(&List.last/1)
-    |> Enum.map(&String.to_integer/1)
   end
 end

@@ -66,6 +66,14 @@ defmodule Dota do
       response -> response
     end
   end
+  
+  def update_item_map do
+    IO.inspect(
+      Enum.reduce(items, %{}, fn(item, map) -> 
+        Map.put(map, item["id"], Map.take(item, ~w(id localized_name name recipe secret_shop side_shop))) 
+      end), limit: 1000, width: 240)
+    :ok
+  end
 
   def item_img(id), do: Steam.get_item_image(id)
 

@@ -69,8 +69,11 @@ defmodule Dota do
   
   def update_item_map do
     IO.inspect(
-      Enum.reduce(items, %{}, fn(item, map) -> 
-        Map.put(map, item["id"], Map.take(item, ~w(id localized_name name recipe secret_shop side_shop))) 
+      Enum.reduce(items, %{}, fn(item, map) ->
+        item_map = item
+        |> Map.take(~w(id localized_name name recipe secret_shop side_shop))
+        |> Map.update!("name", fn name -> String.slice(name, String.length("item_")..String.length(name)) end)
+        Map.put(map, item["id"], item_map) 
       end), limit: 1000, width: 240)
     :ok
   end

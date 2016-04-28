@@ -49,7 +49,7 @@ defmodule Dota.Steam do
         end
         
       {:ok, %HTTPoison.Response{status_code: 503, body: body}} ->
-        {:error, 503, "Service unavailable"}
+        {:error, "Service unavailable"}
         
       response -> {:error, response}
       

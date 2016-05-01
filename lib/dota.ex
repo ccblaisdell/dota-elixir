@@ -17,6 +17,10 @@ defmodule Dota do
   def history(account_id) do
     Steam.fetch("GetMatchHistory", %{account_id: account_id})
   end
+  
+  def history_ids(account_id) do
+    Steam.fetch("GetMatchHistoryIds", %{account_id: account_id})
+  end
 
   # NOTE: I don't know what this is for...
   def p_matches(ids) do
@@ -68,13 +72,14 @@ defmodule Dota do
   end
   
   def update_item_map do
-    IO.inspect(
-      Enum.reduce(items, %{}, fn(item, map) ->
+    items
+    |> Enum.reduce(%{}, fn(item, map) ->
         item_map = item
         |> Map.take(~w(id localized_name name recipe secret_shop side_shop))
         |> Map.update!("name", fn name -> String.slice(name, String.length("item_")..String.length(name)) end)
         Map.put(map, item["id"], item_map) 
-      end), limit: 1000, width: 240)
+      end)
+    |> IO.inspect(limit: 1000, width: 240)
     :ok
   end
 

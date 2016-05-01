@@ -1,5 +1,6 @@
 defmodule Dota.Steam do
   require IEx
+  require Logger
 
   @hero_img_sizes ~w(sb.png lg.png full.png)
 
@@ -16,6 +17,17 @@ defmodule Dota.Steam do
     case do_fetch(method, options, interface, api_version) do
       {:ok, result} -> {:ok, result["friends"]}
       response -> response
+    end
+  end
+  
+  def fetch("GetMatchHistoryIds" = method, options, interface, api_version) do
+    case fetch("GetMatchHistory", options, interface, api_version) do
+      {:ok, %{"matches" => summaries}} ->
+        ids = summaries
+        |> Enum.map(&Map.fetch(&1, "match_id"))
+        |> Enum.map(fn {:ok, match_id} -> match_id end)
+        |> Enum.map(&to_string/1)
+        {:ok, ids}
     end
   end
   
@@ -74,8 +86,11 @@ defmodule Dota.Steam do
     url = "http://cdn.dota2.com/apps/dota2/images/items/#{name}_lg.png"
     case HTTPoison.get(url) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
+        Logger.debug "Downloaded image for #{name}"
         {:ok, body}
-      response -> response
+      response -> 
+        Logger.error "Failed to download image for #{name}"
+        response
     end
   end
 

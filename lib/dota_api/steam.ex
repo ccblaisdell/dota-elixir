@@ -46,6 +46,33 @@ defmodule Dota.Steam do
   def fetch(method, options \\ %{}, interface \\ "IDOTA2Match_570", api_version \\ "v0001") do
     do_fetch(method, options, interface, api_version)
   end
+  
+  defp do_fetch("GetPlayerSummaries" = method, options, interface, api_version) do
+    url = build_url(method, interface, api_version)
+    params = get_params(options)
+    case HTTPoison.get(url, [], params) do
+      
+      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
+        response = Poison.Parser.parse!(body)
+        case response["response"] do
+          %{"error" => reason} -> 
+            Logger.error(reason)
+            {:error, reason}
+          %{"status" => 15, "statusDetail" => details} -> 
+            Logger.error(details)
+            {:error, details}
+          _ -> 
+            {:ok, response["response"]}
+        end
+        
+      {:ok, %HTTPoison.Response{status_code: 503, body: body}} ->
+        {:error, "Service unavailable"}
+        
+      response -> 
+        {:error, response}
+        
+    end
+  end
     
   defp do_fetch(method, options \\ %{}, interface \\ "IDOTA2Match_570", api_version \\ "v0001") do
     url = build_url(method, interface, api_version)
@@ -55,15 +82,22 @@ defmodule Dota.Steam do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         response = Poison.Parser.parse!(body)
         case response["result"] do
-          %{"error" => reason} -> {:error, reason}
-          %{"status" => 15, "statusDetail" => details} -> {:error, details}
-          _ -> {:ok, response["result"]}
+          %{"error" => reason} -> 
+            Logger.error(reason)
+            {:error, reason}
+          %{"status" => 15, "statusDetail" => details} -> 
+            Logger.error(details)
+            {:error, details}
+          _ -> 
+            {:ok, response["result"]}
         end
         
       {:ok, %HTTPoison.Response{status_code: 503, body: body}} ->
         {:error, "Service unavailable"}
         
-      response -> {:error, response}
+      response -> 
+        Logger.error(response)
+        {:error, response}
       
     end
   end

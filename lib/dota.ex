@@ -40,8 +40,13 @@ defmodule Dota do
   end
 
   def profile(id) do
-    {:ok, [profile | _]} = profiles([id])
-    {:ok, profile}
+    result = profiles([id])
+    case result do
+      {:ok, [profile | _]} ->
+        {:ok, profile}
+      _ ->
+        {:error, result}
+    end
   end
 
   def friends(id) do
